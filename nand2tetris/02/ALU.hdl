@@ -7,7 +7,7 @@
  * The ALU (Arithmetic Logic Unit).
  * Computes one of the following functions:
  * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
- * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs, 
+ * x+1, y+1, x-1, y-1, x&y, x|y on two 16-bit inputs,
  * according to 6 input bits denoted zx,nx,zy,ny,f,no.
  * In addition, the ALU computes two 1-bit outputs:
  * if the ALU output == 0, zr is set to 1; otherwise zr is set to 0;
@@ -27,8 +27,8 @@
 // if (out < 0) set ng = 1
 
 CHIP ALU {
-    IN  
-        x[16], y[16],  // 16-bit inputs        
+    IN
+        x[16], y[16],  // 16-bit inputs
         zx, // zero the x input?
         nx, // negate the x input?
         zy, // zero the y input?
@@ -36,11 +36,51 @@ CHIP ALU {
         f,  // compute out = x + y (if 1) or x & y (if 0)
         no; // negate the out output?
 
-    OUT 
+    OUT
         out[16], // 16-bit output
         zr, // 1 if (out == 0), 0 otherwise
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+    // Put you code here:
+
+    //zx
+    Mux16(a=x, b=false, sel=zx, out=AfterZx);
+    //nx
+    Not16(in=AfterZx, out=Notx);
+    Mux16(a=AfterZx, b=Notx, sel=nx, out=AfterNx);
+
+    //zy
+    Mux16(a=y, b=false, sel=zy, out=AfterZy);
+    //ny
+    Not16(in=AfterZy, out=Noty);
+    Mux16(a=AfterZy, b=Noty, sel=ny, out=AfterNy);
+
+    //x+y
+    Add16(a=AfterNx, b=AfterNy, out=Addxy);
+    //x&y
+    And16(a=AfterNx, b=AfterNy, out=Andxy);
+
+    //f=1 or f=0 out = !out
+    Mux16(a=Andxy, b=Addxy, sel=f, out=AfterF);
+
+    //no
+    Not16(in=AfterF, out=NotAfterF);
+    Mux16(a=AfterF, b=NotAfterF, sel=no, out=FinalOut);
+
+    //out = 0
+    //I think these 3 lines may work like Or16Way, but not support, so nedd build Or16Way first
+    //Or8Way(in=FinalOut[0..7],  out=Or8right);
+    //Or8Way(in=FinalOut[8..15], out=Or8left);
+    //Or(a=Or8left, b=Or8right, out=Out16or);
+
+    Or16Way(in=FinalOut, out=Out16or);
+    Not(in=Out16or, out=zr);
+    //also work
+    //Mux16(a[0]=true, b[0]=false, sel=Out16or, out[0]=zr);
+
+    //out < 0
+    And16(a[0..15]=true, b=FinalOut, out[15]=ng, out[0..14]=trush);
+
+    Mux16(a=FinalOut, b=true, sel=false, out=out);
 }
