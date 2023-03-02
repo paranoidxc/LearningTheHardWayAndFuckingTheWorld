@@ -69,7 +69,7 @@ CHIP ALU {
     Mux16(a=AfterF, b=NotAfterF, sel=no, out=FinalOut);
 
     //out = 0
-    //I think these 3 lines may work like Or16Way, but not support, so nedd build Or16Way first
+    //I think these 3 lines may work like Or16Way, but not support, so need build Or16Way first
     //Or8Way(in=FinalOut[0..7],  out=Or8right);
     //Or8Way(in=FinalOut[8..15], out=Or8left);
     //Or(a=Or8left, b=Or8right, out=Out16or);
