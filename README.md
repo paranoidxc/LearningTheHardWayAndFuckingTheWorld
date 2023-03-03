@@ -10,7 +10,5 @@
 >
 > Works of imagination should be written in very plain language; the more purely imaginative they are, the more necessary it is to be plain.
 >
-> Make everything as simple as possible, but not simpler.
->
 > Form ever follows function.
 > Form IS function.
