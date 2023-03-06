@@ -56,3 +56,73 @@ datatype move = Discard of card | Draw
 exception IllegalMove
 
 (* put your solutions for problem 2 here *)
+
+fun card_color (suit, rank) =
+    case suit of Clubs => Black
+	       | Spades => Black
+	       | _ => Red
+    
+	
+fun card_value (suit, rank) =
+    case rank of Ace => 11
+	       | Num i => i
+	       | _ => 10 
+			    
+    
+fun remove_card (cs, c, e) =
+    case cs of [] => raise e
+	     | x::cs' => case x = c of
+			     true => cs'
+			   | false => case remove_card(cs', c, e) of
+					   [] => [x]
+					 | y :: cs'' => x::y::cs''
+
+								  
+fun all_same_color (cs) =
+    case cs of
+	[] => true
+      | x::[] => true
+      | x::y::cs' => case card_color(x) = card_color(y) of
+			 true => all_same_color(y::cs')
+		       | false => false 
+
+fun sum_cards (cs) =
+    let
+	fun acc_sum_cards (cs, sum) =
+	    case cs of
+		[] => sum
+	      | x::cs' => acc_sum_cards(cs', sum + card_value(x))
+	       
+    in
+	acc_sum_cards(cs, 0)
+    end	
+   
+fun score (cs,goal) =
+    let fun cal(cs) = 
+	    case (sum_cards(cs), goal) of
+		(sum, goal) => case sum > goal of
+				   true => 3 * (sum - goal)
+				 | _ => goal - sum
+    in
+	case all_same_color(cs) of
+	    true => cal(cs) div 2
+	  | false => cal(cs)
+    end
+	
+
+fun officiate (cs, ms, goal) =
+    let
+	fun move_list (cs, ms, l) =
+	    case ms of
+		[] => l
+	      | m::ms' => case m of
+			      Discard card => move_list (cs, ms', remove_card(l, card, IllegalMove))
+			    | Draw => case cs of
+					  [] => l
+					| c::_ => case sum_cards(c::l) > goal of
+						      true => c::l
+						    | false => move_list(remove_card(cs,c,IllegalMove), ms', c::l)
+	    
+    in
+	score(move_list(cs, ms, []), goal) 
+    end
