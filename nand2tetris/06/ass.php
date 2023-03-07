@@ -97,14 +97,7 @@ class Parser
     {
         $r = ['A' => 0, 'D' => 0, 'M' => 0];
         for ($i = 0; $i < strlen($str); $i++) {
-            $c = $str[$i];
-            if ("A" == $c) {
-                $r['A'] = 1;
-            } else if ("M" == $c) {
-                $r['M'] = 1;
-            } else if ("D" == $c) {
-                $r['D'] = 1;
-            }
+            $r[$str[$i]] = 1;
         }
 
         return join("", $r);
@@ -112,8 +105,7 @@ class Parser
 
     function comp($str)
     {
-        $v = self::$MAP_COMP[$str];
-        return $v;
+        return self::$MAP_COMP[$str];
     }
 
     function jump($str)
@@ -124,10 +116,6 @@ class Parser
             $v = self::$MAP_JUMP[$str];
         }
         return $v;
-    }
-
-    function goFuck()
-    {
     }
 }
 
