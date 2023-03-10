@@ -316,7 +316,7 @@ class CodeWrite
             "@R13",
             "M=D",
 
-            //return addr  use FRAME-5 after FRAME -4 not work
+            //return addr
             "@5",
             "A=D-A",
             "D=M",
@@ -357,15 +357,6 @@ class CodeWrite
             "A=M",
             "0;JMP",
         ]);
-        // I think this should work, but...
-        /*
-        $t = array_merge($t, [
-            "@R13",
-            "A=M-1",
-            "A=M",
-            "0;JMP",
-        ]);
-        */
 
         $this->pushAsmCode($t);
     }
