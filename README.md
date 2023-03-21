@@ -18,3 +18,7 @@
 > Programmers are creators of universes for which they alone are responsible. Universes of virtually unlimited complexity can be created in the form of computer programs.
 >
 > If everything seems under control, you’re Must not going fast enough.
+>
+> High thoughts need a high language.
+>
+> Neither can embellishments of language be found without arrangement and expression of thoughts, nor can thoughts be made to shine without the light of language.
