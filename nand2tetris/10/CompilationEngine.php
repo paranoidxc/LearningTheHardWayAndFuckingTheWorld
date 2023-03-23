@@ -26,24 +26,11 @@ class CompilationEngine
     {
         if (in_array($this->tknzr->token, ['static', 'field'])) {
             $this->push("<classVarDec>");
-
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
             $this->process($this->tknzr->token);
-
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
             $this->process($this->tknzr->token);
-
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
             $this->process($this->tknzr->token);
-
             if ("," == $this->tknzr->token) {
                 $this->process(",");
-
-                //$this->printXMLToken($this->tknzr->token);
-                //$this->tknzr->advance();
                 $this->process($this->tknzr->token);
             }
             $this->process(";");
@@ -58,9 +45,6 @@ class CompilationEngine
         while (in_array($this->tknzr->token, ['constructor', 'function', 'method'])) {
             $this->push("<subroutineDec>");
 
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
-
             $this->process($this->tknzr->token);
 
             $this->compileVarDec();
@@ -74,7 +58,6 @@ class CompilationEngine
             $this->compileStatements();
             $this->process("}");
             $this->push("</subroutineBody>");
-
             $this->push("</subroutineDec>");
         }
     }
@@ -91,28 +74,14 @@ class CompilationEngine
 
     function compileParameterList()
     {
-
         $this->process("(");
         $this->push("<parameterList>");
         if (")" != $this->tknzr->token) {
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
             $this->process($this->tknzr->token);
-
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
             $this->process($this->tknzr->token);
-
             while ("," == $this->tknzr->token) {
-
                 $this->process(",");
-
-                //$this->printXMLToken($this->tknzr->token);
-                //$this->tknzr->advance();
                 $this->process($this->tknzr->token);
-
-                //$this->printXMLToken($this->tknzr->token);
-                //$this->tknzr->advance();
                 $this->process($this->tknzr->token);
             }
         }
@@ -124,22 +93,12 @@ class CompilationEngine
     {
         while ("var" == $this->tknzr->token) {
             $this->push("<varDec>");
-            /* $this->printXMLToken($this->tknzr->token);
-            $this->tknzr->advance(); */
             $this->process($this->tknzr->token);
-
-            /* $this->printXMLToken($this->tknzr->token);
-            $this->tknzr->advance(); */
             $this->process($this->tknzr->token);
-
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
             $this->process($this->tknzr->token);
 
             while ("," == $this->tknzr->token) {
                 $this->process(",");
-                //$this->printXMLToken($this->tknzr->token);
-                //$this->tknzr->advance();
                 $this->process($this->tknzr->token);
             }
 
@@ -151,9 +110,6 @@ class CompilationEngine
     function compileVarDec()
     {
         if (JackTokenizer::$T_KEYWORD == $this->tknzr->tokenType()) {
-            /* $this->printXMLToken($this->tknzr->token);
-            $this->tknzr->advance(); */
-
             $this->process($this->tknzr->token);
         } else {
             $this->push("<identifier> " . $this->tknzr->token . " </identifier>");
@@ -274,16 +230,10 @@ class CompilationEngine
             $this->compileTerm();
         } else if (JackTokenizer::$T_INT_CONST == $this->tknzr->tokenType()) {
             $this->process($this->tknzr->token);
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
         } else if (JackTokenizer::$T_STRING_CONST == $this->tknzr->tokenType()) {
             $this->process($this->tknzr->token);
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
         } else if (JackTokenizer::$T_KEYWORD == $this->tknzr->tokenType()) {
             $this->process($this->tknzr->token);
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
         } else if (JackTokenizer::$T_IDENTIFIER == $this->tknzr->tokenType()) {
             if ("." == $this->tknzr->nextToken()) {
                 $this->compileVarDec();
@@ -311,10 +261,7 @@ class CompilationEngine
         $this->push("</term>");
 
         while ($this->tknzr->isOp()) {
-            //$this->printXMLToken($this->tknzr->token);
-            //$this->tknzr->advance();
             $this->process($this->tknzr->token);
-
             $this->compileTerm();
         }
     }
@@ -337,11 +284,13 @@ class CompilationEngine
     function process($str)
     {
         outLog("token={$this->tknzr->token} | str={$str}");
+        if (0 == strlen($str)) {
+            $str = $this->tknzr->token;
+        }
         if ($this->tknzr->token == $str) {
             $this->printXMLToken($str);
         } else {
             outLog("syntax error: token={$this->tknzr->token} | guess str={$str}");
-            //exit;
         }
         $this->tknzr->advance();
     }
