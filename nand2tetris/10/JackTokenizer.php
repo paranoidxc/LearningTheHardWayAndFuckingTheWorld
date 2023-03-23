@@ -60,59 +60,57 @@ class JackTokenizer
     function __construct($lines)
     {
         //outLog($lines);
+        $l = 1;
         foreach ($lines as $line) {
-            $tokens = explode(" ", $line);
-            $tmp = [];
-            foreach ($tokens as $token) {
-                //outLog($token);
-                $tmp = array_merge($tmp, $this->parseTk($token));
-            }
-            $this->tokens = array_merge($this->tokens, $tmp);
+            //outLog($l);
+            $this->tokens = array_merge($this->tokens, $this->parseLine($line, $l));
+            $l++;
         }
         outLog($this->tokens);
         $this->total_tokens = count($this->tokens);
     }
 
-    function parseTk($token)
+    function parseLine($line, $l)
     {
-        if ($token == 'x,') {
-            //outLog($token);
-        }
+        //outLog($line);
         $r = [];
-        $s = 0;
-        for ($i = 0; $i < strlen($token); $i++) {
-            $c = $token[$i];
-            if ($token == 'x,') {
-                //outLog($c);
-            }
+        $is_string_start = 0;
 
-            if (in_array($c, self::$LIST_SYMBOL)) {
-                //outLog("s=" . $s);
-                //outLog("i=" . $i);
-                //outLog(substr($token, $s));
-                $len = $i - $s ? $i - $s : 1;
-                $t = substr($token, $s, $len);
-                if ($t != $c) {
-                    $r[] = $t;
+        $str_s_idx = 0;
+        $list_i = 0;
+        for ($i = 0; $i < strlen($line); $i++) {
+            $c = $line[$i];
+
+            //outLog("i = {$i} ; c=" . $c . " str_s_idx = {$str_s_idx} is_string_start = {$is_string_start} list_i = {$list_i}");
+            if ($is_string_start) {
+                if ('"' == $c) {
+                    $r[] = substr($line, $str_s_idx, $i - $str_s_idx + 1);
+                    $str_s_idx = 0;
+                    $list_i = $i + 1;
+                    $is_string_start = 0;
                 }
-                $r[] = $token[$i];
-                $s = $i + 1;
-            } else {
-                //outLog('else');
+            } else if ('"' == $c) {
+                $str_s_idx = $i;
+                $is_string_start = 1;
+            } else if (in_array($c, self::$LIST_SYMBOL)) {
+                if ($i - $list_i == 0) {
+                    $len = $i - $list_i == 0 ? 1 : $i - $list_i;
+                    $r[] = substr($line, $list_i, $len);
+                } else {
+                    $len = $i - $list_i == 0 ? 1 : $i - $list_i;
+                    $r[] = substr($line, $list_i, $len);
+                    $r[] = $c;
+                }
+                $list_i = $i + 1;
+            } else if (" " == $c) {
+                if ($i != $list_i) {
+                    $r[] = substr($line, $list_i, $i - $list_i);
+                }
+                $list_i = $i + 1;
             }
         }
 
-        if ($s != strlen($token)) {
-            $t = substr($token, $s);
-            if (strlen($t)) {
-                $r[] = $t;
-            }
-        }
-
-        if ($token == 'x,') {
-            //outLog($r);
-            //exit;
-        }
+        //outLog($r);
         return $r;
     }
 

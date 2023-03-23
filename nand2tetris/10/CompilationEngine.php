@@ -269,8 +269,8 @@ class CompilationEngine
         outLog($this->tknzr->tokenType());
         outLog($this->tknzr->tokenTypeStr());
 
-        if ('-' == $this->tknzr->token) {
-            $this->process('-');
+        if (in_array($this->tknzr->token, ['-', '~'])) {
+            $this->process($this->tknzr->token);
             $this->compileTerm();
         } else if (JackTokenizer::$T_INT_CONST == $this->tknzr->tokenType()) {
             $this->process($this->tknzr->token);
