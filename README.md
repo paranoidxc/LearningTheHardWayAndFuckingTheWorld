@@ -22,3 +22,5 @@
 > High thoughts need a high language.
 >
 > Neither can embellishments of language be found without arrangement and expression of thoughts, nor can thoughts be made to shine without the light of language.
+>
+> When I am working on a problem, I never think about beauty. But when I have finished, if the solution is not beautiful, I know it is wrong.
