@@ -11,7 +11,6 @@
 (define third caddr)
 
 
-
 (define add1
   (lambda (x)
     (+ 1 x)))
@@ -46,8 +45,14 @@
                              (cdr values)
                              entry-f)])))
 
+; 把 table 理解为 一个 kv map的数据结构，也叫 environment
+; 只是别名
 (define extend-table cons)
 
+; 根据 name 在 table 中查找其对应的值
+; 调用 lookup-in-entry 从 第1个 entry 中查找
+; 如果找不到 内层函数会通过 第3个参数 重新
+; 调用 lookup-in-table 此时的 table 是少了 第一个 entry 的table
 (define lookup-in-table
    (lambda (name table table-f)
      (cond 
@@ -61,6 +66,8 @@
                  (cdr table)
                  table-f)))))))
 
+; 6 of number, #t #f 'cons 'car 'cdr ... is return *const
+; 'eq? 'add1 ... is return *const
 (define atom-to-action
   (lambda (e)
     (cond
@@ -79,6 +86,7 @@
       [(eq? e (quote number?)) *const]
       [else *identifier])))
 
+;
 (define expression-to-action
   (lambda (e)
     (cond
@@ -99,6 +107,9 @@
          [else *application])]
       [else *application])))
 
+; 入口函数 类是 eval
+; (value atom)
+; (value expression)
 (define value
   (lambda (e)
     (meaning e (quote ()))))
