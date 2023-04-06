@@ -32,11 +32,11 @@ class SymbolTable
         if ($kind == 'var') {
             $kind = "local";
         }
-        //$count =  $this->kindOf($kind);
-        outLog("SY DEFINE n={$name} t=$type k=$kind");
-        //$count =  $this->indexOf($kind);
         $count = $this->varCount($kind);
+
+        outLog("Fun: " . __FUNCTION__ . " n={$name} t=$type k=$kind");
         outLog("exist count = {$count}");
+
         if (!strlen($count)) {
             $count = -1;
         } else {
@@ -73,7 +73,12 @@ class SymbolTable
 
     function kindOf($name)
     {
-        return $this->_rowOfName($name, self::$KIND);
+
+        $r =  $this->_rowOfName($name, self::$KIND);
+        if ($r == "field") {
+            $r = "this";
+        }
+        return $r;
     }
 
     function typeOf($name)
@@ -90,14 +95,24 @@ class SymbolTable
     {
         $sb = $this->subroutine_sb;;
         if (self::$SB_CLASS == $this->level) {
-            $sb = $this->class_sb;
+            //$sb = $this->class_sb;
         }
-        outLog("ROW OF name={$name} col={$col}");
-        outLog($sb);
+        //outLog("ROW OF name={$name} col={$col}");
+        //outLog($sb);
         $r = '';
         foreach ($sb as $row) {
             if ($row[self::$NAME] == $name) {
                 $r = $row[$col];
+            }
+        }
+
+
+        if (!$r) {
+            $sb = $this->class_sb;
+            foreach ($sb as $row) {
+                if ($row[self::$NAME] == $name) {
+                    $r = $row[$col];
+                }
             }
         }
 

@@ -33,9 +33,9 @@ class VMWriter
     {
     }
 
-    function writeCall($name, $nArgs)
+    function writeCall($name, $nArgs, $is_para=0)
     {
-        if ($nArgs) {
+        if ($nArgs || $is_para) {
             $this->lines[] = "call {$name} {$nArgs}";
         } else {
             $this->lines[] = "{$name}";

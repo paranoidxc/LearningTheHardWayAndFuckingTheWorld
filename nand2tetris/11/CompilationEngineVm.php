@@ -60,6 +60,8 @@ class CompilationEngineVm
         }
     }
 
+
+    public $methods = [];
     function compileSubroutineDec()
     {
         while (in_array($this->tknzr->token, ['constructor', 'function', 'method'])) {
@@ -85,16 +87,28 @@ class CompilationEngineVm
             $this->process("{");
             $this->compileVarDec2();
 
+            $r = [];
             if ($fun_type == "method") {
-                $nArgs += 1;
+                //$nArgs += 1;
+                $nArgs = $this->symbol_table->varCount('local');
+                $r[] = "push argument 0";
+                $r[] = "pop pointer 0";
+                $this->methods[] = $fun;
             } elseif ($fun_type == "function") {
                 $nArgs = $this->symbol_table->varCount('local');
-                outLog("nARgs");
-                outLog($nArgs);
+                //outLog("nARgs");
+                //outLog($nArgs);
             } elseif ($fun_type == "constructor") {
                 $nArgs = 0;
+                $r[] = "push constant 2";
+                $r[] = "call Memory.alloc 1";
+                $r[] = "pop pointer 0";
             }
+
+            $fun_type = "function";
             $this->vm->write("{$fun_type} {$this->_map['class_name']}.{$fun} {$nArgs}");
+            $this->vm->write($r);
+
 
             $this->compileStatements();
             $this->process("}");
@@ -109,15 +123,40 @@ class CompilationEngineVm
     {
         $fun = $this->tknzr->token;
         $this->compileVarDec();
+        $plus_nargs = 0;
         if ('.' == $this->tknzr->token) {
+            //$this->symbol_table->out();
+
+            $kind = $this->symbol_table->kindOf($fun);
+            $type = $this->symbol_table->typeOf($fun);
+            $idx = $this->symbol_table->indexOf($fun);
+
+            //outLog("kind = {$kind}; type = {$type}; index = {$idx}");
+
             $this->process(".");
+            if ($this->is_para && $type) {
+                $fun = $type;
+                $plus_nargs = 1;
+            }
             $fun .= "." . $this->tknzr->token;
             $this->compileVarDec();
+
+            if ($this->is_para) {
+                $this->push("push {$kind} {$idx}");
+            }
+        } else {
+            //outLog("METHOD = ");
+            //outLog($this->methods);
+            if (in_array($fun, $this->methods)) {
+                $fun = $this->_map['class_name'].".".$fun;
+                $this->vm->write("push pointer 0");
+                $plus_nargs = 1;
+            }
         }
         $nArgs = $this->compileExpressionList();
+        $nArgs += $plus_nargs;
 
         return [$fun, $nArgs];
-        //$this->vm->writeCall($fun, $nArgs);
     }
 
     function compileParameterList()
@@ -126,13 +165,26 @@ class CompilationEngineVm
         $this->process("(");
         $this->push("<parameterList>");
         if (")" != $this->tknzr->token) {
+
+            $type = $this->tknzr->token;
             $this->process($this->tknzr->token);
+
+            $name = $this->tknzr->token;
             $this->process($this->tknzr->token);
+
+            $this->symbol_table->define($name, $type, "argument");
+
             $nArgs += 1;
             while ("," == $this->tknzr->token) {
                 $this->process(",");
+
+                $type = $this->tknzr->token;
                 $this->process($this->tknzr->token);
+
+                $name = $this->tknzr->token;
                 $this->process($this->tknzr->token);
+
+                $this->symbol_table->define($name, $type, "argument");
                 $nArgs += 1;
             }
         }
@@ -192,10 +244,21 @@ class CompilationEngineVm
             } else {
                 if ($this->is_para) {
                     if ($this->symbol_table->kindOf($this->tknzr->token)) {
+                        $kind = $this->symbol_table->kindOf($this->tknzr->token);
+                        $idx = $this->symbol_table->indexOf($this->tknzr->token);
+                        $this->vm->write("push {$kind} {$idx}");
+                        /*
                         if ('local' == $this->symbol_table->kindOf($this->tknzr->token)) {
                             $idx = $this->symbol_table->indexOf($this->tknzr->token);
                             $this->vm->write("push local {$idx}");
+                        } else if ('argument' == $this->symbol_table->kindOf($this->tknzr->token)) {
+                            $idx = $this->symbol_table->indexOf($this->tknzr->token);
+                            $this->vm->write("push argument {$idx}");
+                        } else {
+                            outLog(__FILE__ . " " . __FUNCTION__ . " " . __LINE__);
+                            exit;
                         }
+                        */
                     }
                 }
                 /*
@@ -244,18 +307,18 @@ class CompilationEngineVm
     {
         $this->push("<doStatement>");
         $this->process("do");
+        $this->is_para = 1;
         list($fun, $nArgs) = $this->compileSubroutine();
+        $this->vm->writeCall($fun, $nArgs, $this->is_para);
+        $this->is_para = 0;
         $this->process(";");
         $this->push("</doStatement>");
-
-        $this->vm->writeCall($fun, $nArgs);
         $this->vm->write("pop temp 0");
     }
 
-    //public $is_let = 0;
     function compileLet()
     {
-        //$this->is_let = 1;
+        outLog("Fun:" . __FUNCTION__);
         $this->push("<letStatement>");
         $this->process("let");
         $name = $this->tknzr->token;
@@ -267,22 +330,18 @@ class CompilationEngineVm
         }
         $this->process("=");
         $this->is_para = 1;
+        outLog("IS_PARA {$this->is_para}");
         $this->compileExpression();
         $this->is_para = 0;
         $this->process(";");
         $this->push("</letStatement>");
 
-        outLog("LET==========");
-        outLog("get symbol {$name}");
         $this->symbol_table->out();
 
         $var_kind = $this->symbol_table->kindOf($name);
-        //outLog("KIND");
-        //outLog($var_kind);
         $var_idx = $this->symbol_table->indexOf($name);
-        //outLog("IDX");
-        //outLog($var_idx);
-        //outLog("pop {$var_kind} {$var_idx}");
+
+        outLog("name={$name}; kind = {$var_kind}; idx = {$var_idx}");
 
         $this->vm->write("pop {$var_kind} {$var_idx}");
     }
@@ -310,16 +369,18 @@ class CompilationEngineVm
 
         $this->process("}");
         $this->push("</whileStatement>");
-        $this->while_idx += 1;
     }
 
     function compileReturn()
     {
         $r = [];
-        $this->push("<returnStatement>");
+        $this->push("<reurnStatement>");
         $this->process("return");
         if (";" != $this->tknzr->token) {
+            $global_is_para = $this->is_para;
+            $this->is_para = 1;
             $this->compileExpression();
+            $this->is_para = $global_is_para;
         } else {
             $r[] = "push constant 0";
         }
@@ -360,6 +421,8 @@ class CompilationEngineVm
             $this->compileStatements();
             $this->vm->write("label IF_END{$if_idx}");
             $this->process("}");
+        } else {
+            $this->vm->write("label IF_FALSE{$if_idx}");
         }
         $this->push("</ifStatement>");
     }
@@ -374,9 +437,6 @@ class CompilationEngineVm
     function compileTerm($is_fun = false)
     {
         $this->push("<term>");
-        //outLog($this->tknzr->token);
-        //outLog($this->tknzr->tokenType());
-        //outLog($this->tknzr->tokenTypeStr());
 
         $fun = '';
         $nArgs = 0;
@@ -405,6 +465,8 @@ class CompilationEngineVm
         } else if (JackTokenizer::$T_KEYWORD == $this->tknzr->tokenType()) {
             $this->process($this->tknzr->token);
         } else if (JackTokenizer::$T_IDENTIFIER == $this->tknzr->tokenType()) {
+            //outLog("token = ".$this->tknzr->token);
+            //outLog('is para = '.$this->is_para);
             if ("." == $this->tknzr->nextToken()) {
                 $fun = $this->tknzr->token;
                 $is_fun = true;
@@ -428,13 +490,13 @@ class CompilationEngineVm
             }
 
             if ($is_fun) {
-                $this->vm->writeCall($fun, $nArgs);
+                outLog("is FUN = {$fun}, nArgs = {$nArgs}; global_is_para = {$this->is_para}");
+                $this->vm->writeCall($fun, $nArgs, $this->is_para);
             }
         } else if (JackTokenizer::$T_SYMBOL == $this->tknzr->tokenType()) {
             $this->process("(");
             $this->compileExpression();
             $this->process(")");
-            //$this->vm->writeCall("111", 2);
         }
 
         $this->push("</term>");
@@ -445,11 +507,29 @@ class CompilationEngineVm
             if (in_array($this->tknzr->token, ['*'])) {
                 $n = "Math.multiply";
                 $nG = "2";
+            } else if (in_array($this->tknzr->token, ['/'])) {
+                $n = "Math.divide";
+                $nG = "";
             } else if (in_array($this->tknzr->token, ['+'])) {
                 $n = "add";
                 $nG = "";
+            } else if (in_array($this->tknzr->token, ['-'])) {
+                $n = "sub";
+                $nG = "";
+            } else if (in_array($this->tknzr->token, ['='])) {
+                $n = "eq";
+                $nG = "";
+            } else if (in_array($this->tknzr->token, ['<'])) {
+                $n = "lt";
+                $nG = "";
             } else if (in_array($this->tknzr->token, ['>'])) {
                 $n = "gt";
+                $nG = "";
+            } else if (in_array($this->tknzr->token, ['&'])) {
+                $n = "and";
+                $nG = "";
+            } else if (in_array($this->tknzr->token, ['|'])) {
+                $n = "or";
                 $nG = "";
             }
             $this->process($this->tknzr->token);
@@ -470,6 +550,7 @@ class CompilationEngineVm
     {
         $nArgs = 0;
         $this->process("(");
+        $global_is_para = $this->is_para;
         $this->is_para = 1;
         $this->push("<expressionList>");
         if (")" != $this->tknzr->token) {
@@ -483,7 +564,7 @@ class CompilationEngineVm
         }
         $this->push("</expressionList>");
         $this->process(")");
-        $this->is_para = 0;
+        $this->is_para = $global_is_para;
         return $nArgs;
     }
 
@@ -525,6 +606,19 @@ class CompilationEngineVm
             $this->vm->write("not");
         } else if ("false" == $token) {
             $this->vm->write("push constant 0");
+        } else if ("this" == $token) {
+            $this->vm->write("push pointer 0");
+        } else if ($this->is_para) {
+            //outLog("++++++++++++++");
+            //outLog($this->tknzr->token);
+            //outLog($this->symbol_table->kindOf($this->tknzr->token));
+            if ($this->symbol_table->kindOf($this->tknzr->token)) {
+                if ('argument' == $this->symbol_table->kindOf($this->tknzr->token)) {
+                    $idx = $this->symbol_table->indexOf($this->tknzr->token);
+                    $this->vm->write("push argument {$idx}");
+                    return;
+                }
+            }
         }
         $this->push("<{$type_str}> {$token} </{$type_str}>");
     }

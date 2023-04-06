@@ -30,8 +30,9 @@ class JackAnalyzer
             }
             //outLog($comp->xml);
             outLog("write to file: {$_vm}");
-            file_put_contents($_vm, join(PHP_EOL, $comp->oxml));
-            $comp->vm->close(str_replace("My", "MyVm", $_vm));
+            //file_put_contents($_vm, join(PHP_EOL, $comp->oxml));
+            //$comp->vm->close(str_replace("My", "MyVm", $_vm));
+            $comp->vm->close($_vm);
         }
     }
 }
