@@ -476,6 +476,17 @@ class CompilationEngineVm
             $this->vm->writeLabel("constant {$this->tknzr->token}");
             $this->process($this->tknzr->token);
         } else if (JackTokenizer::$T_STRING_CONST == $this->tknzr->tokenType()) {
+            $token = str_replace('"', '', $this->tknzr->token);
+            $len = strlen($token);
+
+            $strings = [];
+            $strings[] = "push constant {$len}";
+            $strings[] = "call String.new 1";
+            for ($i = 0; $i < $len; $i++) {
+                $strings[] = "push constant ".ord($token[$i]);
+                $strings[] = "call String.appendChar 2";
+            }
+            $this->vm->write($strings);
             $this->process($this->tknzr->token);
         } else if (JackTokenizer::$T_KEYWORD == $this->tknzr->tokenType()) {
             $this->process($this->tknzr->token);
