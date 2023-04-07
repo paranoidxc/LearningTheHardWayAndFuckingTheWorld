@@ -52,6 +52,7 @@ class VMWriter
 
     function close($f)
     {
+        $this->lines[] = "";
         file_put_contents($f, join(PHP_EOL, $this->lines));
     }
 

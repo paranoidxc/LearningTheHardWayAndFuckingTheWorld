@@ -8,13 +8,15 @@ require_once './VMWriter.php';
 require_once './CompilationEngineVm.php';
 
 $files = [
-    "./11/ConvertToBin/Main.jack",
-    "./11/Seven/Main.jack",
-    "./11/Square/Main.jack",
 ];
 
 $files = [
+    "./11/Seven/Main.jack",
+    "./11/ConvertToBin/Main.jack",
+    "./11/Seven/Main.jack",
+    "./11/Square/Main.jack",
     "./11/Square/SquareGame.jack",
+    "./11/Square/Square.jack",
 ];
 
 foreach ($files as $file) {

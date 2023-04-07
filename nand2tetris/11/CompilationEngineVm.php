@@ -100,7 +100,8 @@ class CompilationEngineVm
                 //outLog($nArgs);
             } elseif ($fun_type == "constructor") {
                 $nArgs = 0;
-                $r[] = "push constant 2";
+                $nField = $this->symbol_table->varCount('field');
+                $r[] = "push constant {$nField}";
                 $r[] = "call Memory.alloc 1";
                 $r[] = "pop pointer 0";
             }
@@ -147,11 +148,11 @@ class CompilationEngineVm
         } else {
             //outLog("METHOD = ");
             //outLog($this->methods);
-            if (in_array($fun, $this->methods)) {
+            //if (in_array($fun, $this->methods)) {
                 $fun = $this->_map['class_name'].".".$fun;
                 $this->vm->write("push pointer 0");
                 $plus_nargs = 1;
-            }
+            //}
         }
         $nArgs = $this->compileExpressionList();
         $nArgs += $plus_nargs;
