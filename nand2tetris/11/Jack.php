@@ -11,12 +11,17 @@ $files = [
 ];
 
 $files = [
+    /*
     "./11/Seven/Main.jack",
     "./11/ConvertToBin/Main.jack",
     "./11/Seven/Main.jack",
     "./11/Square/Main.jack",
     "./11/Square/SquareGame.jack",
     "./11/Square/Square.jack",
+    */
+    "./11/Average/Main.jack",
+    //"./11/Pong.jack",
+    //"./11/ComplexArrays.jack",
 ];
 
 foreach ($files as $file) {
