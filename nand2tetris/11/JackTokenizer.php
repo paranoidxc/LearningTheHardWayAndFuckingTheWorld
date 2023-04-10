@@ -217,4 +217,10 @@ class JackTokenizer
     {
         return in_array($this->token, ['+', '-', '*', '/', '&', '|', '=', '>', '<']);
     }
+
+    function show()
+    {
+        outLog("tokens");
+        outLog($this->tokens);
+    }
 }

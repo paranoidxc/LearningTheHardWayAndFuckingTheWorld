@@ -55,7 +55,8 @@ function clean($lines = [])
         //outLog("BEF:".$l);
         $l = trim($l);
         if ($is_mul) {
-            if ($l[0] == "*" && $l[1] == "/") {
+            $len = strlen($l);
+            if ($len >= 2 && $l[$len - 2] == "*" && $l[$len - 1] == "/") {
                 $is_mul = 0;
             }
             continue;

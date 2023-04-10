@@ -47,8 +47,8 @@ class SymbolTable
         } else {
             $this->subroutine_sb[] = [$name, $type, $kind, $count + 1];
         }
-        outLog("AFTER DEFINE");
-        $this->out();
+        //outLog("AFTER DEFINE");
+        //$this->out();
     }
 
     function varCount($kind)
@@ -131,9 +131,9 @@ class SymbolTable
 
     function out()
     {
-        outLog("CLASS");
+        outLog("CLASS SymbolTable");
         outLog($this->class_sb);
-        outLog("SUB");
+        outLog("SUBROUT SymbolTable");
         outLog($this->subroutine_sb);
     }
 }
