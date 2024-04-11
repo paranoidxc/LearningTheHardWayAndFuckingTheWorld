@@ -3,10 +3,10 @@ package handler
 import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
-	"single-project/internal/logic"
-	"single-project/internal/svc"
-	"single-project/internal/types"
-	"single-project/internal/validator"
+	"single-project/cmd/common/validator"
+	"single-project/cmd/internal/logic"
+	"single-project/cmd/internal/svc"
+	"single-project/cmd/internal/types"
 )
 
 func GetUserFindHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

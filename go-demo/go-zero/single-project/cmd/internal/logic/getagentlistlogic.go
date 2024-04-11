@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/zeromicro/go-zero/core/logc"
 	"github.com/zeromicro/go-zero/core/logx"
-	"single-project/internal/svc"
-	"single-project/internal/types"
+	"single-project/cmd/internal/svc"
+	"single-project/cmd/internal/types"
 )
 
 type GetAgentListLogic struct {

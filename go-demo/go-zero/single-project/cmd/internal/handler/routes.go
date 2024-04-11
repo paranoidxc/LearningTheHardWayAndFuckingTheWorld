@@ -3,8 +3,7 @@ package handler
 
 import (
 	"net/http"
-
-	"single-project/internal/svc"
+	"single-project/cmd/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )

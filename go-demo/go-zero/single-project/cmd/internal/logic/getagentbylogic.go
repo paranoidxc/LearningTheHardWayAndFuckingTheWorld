@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/zeromicro/go-zero/core/logc"
-	"single-project/internal/model"
+	"single-project/cmd/internal/svc"
+	"single-project/cmd/internal/types"
+	"single-project/cmd/model"
 	"strconv"
-
-	"single-project/internal/svc"
-	"single-project/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

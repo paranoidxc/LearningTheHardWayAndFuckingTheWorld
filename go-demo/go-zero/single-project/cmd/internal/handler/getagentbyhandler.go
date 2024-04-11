@@ -2,11 +2,11 @@ package handler
 
 import (
 	"net/http"
+	"single-project/cmd/internal/logic"
+	"single-project/cmd/internal/svc"
+	"single-project/cmd/internal/types"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
-	"single-project/internal/logic"
-	"single-project/internal/svc"
-	"single-project/internal/types"
 )
 
 func GetAgentByHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

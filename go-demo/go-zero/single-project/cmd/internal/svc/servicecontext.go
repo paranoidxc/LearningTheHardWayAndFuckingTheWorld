@@ -6,9 +6,9 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"gorm.io/gorm/schema"
-	"single-project/demo"
-	"single-project/internal/config"
-	"single-project/internal/model"
+	"single-project/cmd/internal/config"
+	"single-project/cmd/model"
+	"single-project/rpc/demo"
 
 	"gorm.io/driver/mysql"
 

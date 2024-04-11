@@ -2,9 +2,9 @@ package handler
 
 import (
 	"net/http"
-	"single-project/internal/logic"
-	"single-project/internal/svc"
-	"single-project/response"
+	"single-project/cmd/common/response"
+	"single-project/cmd/internal/logic"
+	"single-project/cmd/internal/svc"
 )
 
 func pingHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {

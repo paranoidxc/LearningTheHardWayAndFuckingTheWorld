@@ -3,10 +3,9 @@ package logic
 import (
 	"context"
 	"github.com/golang-jwt/jwt/v4"
+	"single-project/cmd/internal/svc"
+	"single-project/cmd/internal/types"
 	"time"
-
-	"single-project/internal/svc"
-	"single-project/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

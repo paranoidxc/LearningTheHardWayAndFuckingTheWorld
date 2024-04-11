@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/logx"
 	"log"
-	"single-project/demo"
-	"single-project/internal/svc"
+	"single-project/cmd/internal/svc"
+	"single-project/rpc/demo"
 )
 
 type PingLogic struct {

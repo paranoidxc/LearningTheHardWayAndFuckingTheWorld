@@ -3,12 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"single-project/internal/config"
-	"single-project/internal/handler"
-	"single-project/internal/svc"
-
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
+	"single-project/cmd/internal/config"
+	"single-project/cmd/internal/handler"
+	"single-project/cmd/internal/svc"
 )
 
 var configFile = flag.String("f", "etc/agent-api.yaml", "the config file")

@@ -2,9 +2,8 @@ package logic
 
 import (
 	"context"
-
-	"single-project/internal/svc"
-	"single-project/internal/types"
+	"single-project/cmd/internal/svc"
+	"single-project/cmd/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
