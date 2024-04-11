@@ -1,0 +1,26 @@
+type (
+    JwtTokenRequest {
+
+    }
+
+
+    JwtTokenResponse  {
+        AccessToken  string `json:"access_token"`
+        AccessExpire int64  `json:"access_expire"`
+        RefreshAfter int64  `json:"refresh_after"` // 建议客户端刷新token的绝对时间
+    }
+    GetUserRequest  {
+        UserId string `json:"userId"`
+    }
+
+    GetUserResponse  {
+        Name string `json:"name"`
+    }
+)
+
+
+
+service agent-api {
+    @handler JwtHandler
+    post /user/token(JwtTokenRequest) returns (JwtTokenResponse)
+}

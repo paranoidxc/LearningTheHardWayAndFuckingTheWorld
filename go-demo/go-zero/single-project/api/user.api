@@ -1,0 +1,25 @@
+syntax = "v1"
+
+type (
+	usertListReq  {}
+	userListResp {
+		id   string `json:"id"`
+		name string `json:"name"`
+	}
+	usertByIdReq {
+		id int `form:"id" validate:"gte=1" label:"用户ID"`
+	}
+	userByIdResp {
+		id   string `json:"id"`
+		name string `json:"name"`
+	}
+)
+
+service agent-api {
+	@handler GetUserFind // TODO: set handler name and delete this comment
+	get /user/find (usertByIdReq) returns (userByIdResp)
+
+	@handler GetUserList // TODO: set handler name and delete this comment
+	get /user/list (usertListReq) returns (userListResp)
+}
+
