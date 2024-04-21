@@ -1,0 +1,38 @@
+syntax = "v1"
+
+import (
+	"user.api"
+	"limit.api"
+	"jwt.api"
+)
+
+info (
+	title:  "agent signle project"
+	desc:   "desc"
+	author: "paranoidxc"
+	email:  "paranoid.xc@gmail.com"
+)
+
+type (
+	agentListReq {
+		name string `form:"name"`
+	}
+	agentListResp {
+		id   string `json:"id"`
+		name string `json:"name"`
+	}
+)
+
+service agent-api {
+	@handler GetAgentList // TODO: set handler name and delete this comment
+	get /agent/list (agentListReq) returns (agentListResp)
+}
+
+@server (
+	jwt: JwtAuth // 开启 jwt 认证
+)
+service agent-api {
+	@handler GetAgentBy // TODO: set handler name and delete this comment
+	get /agent/by (agentListReq) returns (agentListResp)
+}
+

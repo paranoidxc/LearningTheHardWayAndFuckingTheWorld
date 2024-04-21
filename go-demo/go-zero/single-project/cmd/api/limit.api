@@ -1,0 +1,6 @@
+syntax = "v1"
+
+service agent-api {
+    @handler ping
+    get /ping
+}

@@ -1,0 +1,21 @@
+Name: agent-api
+Host: 0.0.0.0
+Port: 7777
+MaxConns: 1
+DevServer:
+  Enabled: true
+  #HealthPath:    "/ping"
+
+DataSource: root:fucking@tcp(localhost:13306)/gva?charset=utf8mb4&parseTime=True&loc=Local
+Table: sys_apis
+Cache:
+  - Host: localhost:6379
+
+JwtAuth:
+  AccessSecret: ad879037-c7a4-4063-9236-6bfc35d54b7d
+  AccessExpire: 86400
+
+RedisConf:
+  Host: 127.0.0.1:6379
+
+DemoTarget: 127.0.0.1:7778
