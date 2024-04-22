@@ -33,6 +33,16 @@ const { login } = proxy.$store.user.useUserStore();
 const loginForm = $ref({});
 
 
+/*
+{
+  code:200,
+  msg:"ok",
+  data: {
+    tokeName: "auth-smallboot",
+    tokenValue: "hhhhhhhhhh" 
+  }
+}
+ */ 
 function handleLogin() {
   proxy.$refs.loginFormRef.validate((valid) => {
     if (valid) {
