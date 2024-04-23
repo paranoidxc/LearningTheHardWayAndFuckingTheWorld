@@ -3,4 +3,4 @@
 # 使用方法：
 # ./genApi.sh
 
-goctl api go -api ../api/memo/main.api -dir ../api/cmder/ --style=goZero --home=../tpl/
+goctl api go -api ../api/desc/main.api -dir ../api/cmder/ --style=goZero --home=../tpl/
